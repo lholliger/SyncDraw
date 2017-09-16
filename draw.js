@@ -13,7 +13,7 @@ app.use('/external/', express.static(__dirname + "/static/"));
 
 var IOMap = new Object();
 
-function IOBoard(x, y, x2, y2, cX, cY) {
+function IOBoard(x, y, x2, y2, cX, cY, color) {
     if (typeof IOMap[cX] != "undefined") {
 
     } else {
@@ -21,10 +21,10 @@ function IOBoard(x, y, x2, y2, cX, cY) {
     }
 
     if (typeof IOMap[cX][cY] != "undefined") {
-            IOMap[cX][cY].push(x + "x" + y + "x" + x2 + "x" + y2);
+            IOMap[cX][cY].push(x + "x" + y + "x" + x2 + "x" + y2 + "x" + color);
     }  else {
         IOMap[cX][cY] = [];
-        IOMap[cX][cY].push(x + "x" + y + "x" + x2 + "x" + y2);
+        IOMap[cX][cY].push(x + "x" + y + "x" + x2 + "x" + y2 + "x" + color);
 
     }
     setTimeout(function() {
@@ -51,7 +51,6 @@ io.on('connection', function(socket){
 
 var chunkX = data[0];
 var chunkY = data[1];
-
         socket.emit("return", IOCGet(chunkX, chunkY))
     });
 
@@ -64,8 +63,9 @@ var chunkY = data[1];
     3: starty
     4: endx
     5: endy
+    6: color
     */
-        IOBoard(data[2],data[3],data[4],data[5],data[0],data[1]);
+        IOBoard(data[2],data[3],data[4],data[5],data[0],data[1], data[6]);
 
           });
     });
@@ -75,3 +75,38 @@ var port = 3001;
 http.listen(port, function(){
   console.log('listening on *:' + port);
 });
+function getUse() {
+  var t = [];
+  var xes = Object.keys(IOMap);
+  xes.forEach(function (element){
+    var yc = Object.keys(IOMap[element]);
+      yc.forEach(function (element2){
+    t = t.concat([[element, element2]]);
+  });
+  });
+  io.emit("online", t);
+  return 0;
+}
+
+function clean() {
+  var t = [];
+  var xes = Object.keys(IOMap);
+  xes.forEach(function (element){
+    var yc = Object.keys(IOMap[element]);
+      yc.forEach(function (element2){
+
+    if (!IOMap[element][element2].length > 0) {
+      delete IOMap[element][element2];
+    }
+  });
+  });
+  return 0;
+}
+
+
+setInterval(function() {
+  clean();
+}, 5000);
+setInterval(function() {
+  getUse();
+}, 5000);

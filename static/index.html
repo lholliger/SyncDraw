@@ -1,19 +1,60 @@
 <script src="/socket.io/socket.io.js"></script>
 <style>
+* {
+  font-family: 'Roboto', sans-serif;
+
+}
 #writer {
     border: 1px solid black;
   }
   input {
     width: 35px;
   }
+  td {
+    border: 1px solid white;
+    vertical-align: top;
+  }
+  hr {
+    margin: 5px;
+    border: 0.5px solid lightgray;
+  }
 </style>
-<body>
+<body><br>
   <center><h2>SyncDraw<sup>Beta</sup></h2>
-    <p id='chunk'>Chunk: 0,0</p>
+<br>
+    <table>
+      <tr>
+        <td>
+          <div style='width: 200px;'>
+          </div>
+          <center>
+          <h2>Active Chunks</h2><hr>
+<div id='use'></div>
+        </td>
+        <td>
+    <canvas id='writer'>lolno</canvas>
+  </td>
+  <td>
+    <div style='width: 200px;'>
+    </div>
+    <center>
+    <h2>Settings</h2>
+    <hr>
+    <h3>Current Chunk</h3>
+    <p id='cx'></p>
+    <p id='cy'></p>
+    <hr>
+    <h3>Change Chunk</h3>
     X: <input id='x' type='number'></input>
     Y: <input id='y' type='number'></input>
-    <button onclick='move()'>Move</button><br><br>
-    <canvas id='writer'>lolno</canvas>
+    <button onclick='move()'>Move</button>
+<hr>
+  <h3>Custom Color<sup> Beta</sup></h3>
+  #<input id='c' style='width: 55px;'></input>
+  <button onclick='scolor()' >Change Color</button><hr>
+
+  </td>
+    </tr>
     </center>
 </body>
 <script src='/external/cli.js'></script>

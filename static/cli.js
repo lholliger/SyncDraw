@@ -6,12 +6,18 @@ var socket = io();
 var pos = new Object();
 pos.x = 0;
 pos.y = 0;
+document.getElementById("cx").innerHTML = "X: " + pos.x;
+document.getElementById("cy").innerHTML = "Y: " + pos.y;
+pos.x = document.getElementById("x").value = pos.y;
+pos.y = document.getElementById("y").value = pos.x;
 function move() {
   pos.x = document.getElementById("x").value;
   pos.y = document.getElementById("y").value;
   reset();
   socket.emit("reqData", [pos.x,pos.y]);
-  document.getElementById("chunk").innerHTML = "Chunk: " + pos.x + ", " + pos.y;
+  document.getElementById("cx").innerHTML = "X: " + pos.x;
+  document.getElementById("cy").innerHTML = "Y: " + pos.y;
+
 }
 window.setInterval(function(){
 socket.emit("writeData", drawio);
@@ -22,23 +28,30 @@ socket.on("return", function(data) {
     data.forEach(function(write) {
 
         write = write.split("x");
+        ctx.strokeStyle = write[4];
+
         ctx.moveTo(write[0], write[1]);
 ctx.lineTo(write[2], write[3]);
 ctx.stroke();
     });
 });
 
-function post(route, dataString)
-{
-
-$.ajax({
-type: "POST",
-url: route,
-data: dataString,
+socket.on("online", function(data) {
+      var x = "";
+  data.forEach(function(element) {
+    x += element[0] + ", " + element[1] + "<br>";
+   });
+   document.getElementById("use").innerHTML = x;
 
 });
+var color = "#000000";
+function scolor() {
+  if (validTextColor("#" + document.getElementById("c").value)) {
+    color = "#" + document.getElementById("c").value;
+  } else {
+    alert("Invalid color");
+  }
 }
-
 
 function get(name){
 if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
@@ -106,10 +119,10 @@ if (mouseDown) {
 ctx.beginPath();
 if (lx == 0 && ly == 0) {
   ctx.moveTo(mousePos.x, mousePos.y);
-  drawio = drawio.concat([[pos.x,pos.y,mousePos.x, mousePos.y, mousePos.x, mousePos.y]]);
+  drawio = drawio.concat([[pos.x,pos.y,mousePos.x, mousePos.y, mousePos.x, mousePos.y, color]]);
 
 } else {
-  drawio = drawio.concat([[pos.x,pos.y,lx, ly, mousePos.x, mousePos.y]]);
+  drawio = drawio.concat([[pos.x,pos.y,lx, ly, mousePos.x, mousePos.y, color]]);
 ctx.moveTo(lx, ly);
 }
 ctx.lineTo(mousePos.x, mousePos.y);
@@ -138,11 +151,11 @@ var touchobj = e.changedTouches[0];
 if (touchobj.clientX - rect.left > 1000 || touchobj.clientX - rect.left < 0 || touchobj.clientY - rect.top < 0 || touchobj.clientY - rect.top > 1000) {} else {
 if (startx == 0 && starty == 0) {
 ctx.moveTo(touchobj.clientX - rect.left, touchobj.clientY - rect.top);
-drawio = drawio.concat([[pos.x,pos.y,Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), Math.round(touchobj.clientX), Math.round(touchobj.clientY)]]);
+drawio = drawio.concat([[pos.x,pos.y,Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), Math.round(touchobj.clientX), Math.round(touchobj.clientY), color]]);
 
 } else {
 ctx.moveTo(startx, starty);
-drawio = drawio.concat([[pos.x,pos.y,Math.round(startx), Math.round(starty), Math.round(touchobj.clientX), Math.round(touchobj.clientY)]]);
+drawio = drawio.concat([[pos.x,pos.y,Math.round(startx), Math.round(starty), Math.round(touchobj.clientX), Math.round(touchobj.clientY), color]]);
 
 }
 ctx.lineTo(touchobj.clientX - rect.left, touchobj.clientY - rect.top);
@@ -161,3 +174,19 @@ startx = 0;
 starty = 0;
 }, false)
         socket.emit("reqData", [pos.x,pos.y]);
+
+
+        function validTextColor(stringToTest) {
+    //Alter the following conditions according to your need.
+    if (stringToTest === "") { return false; }
+    if (stringToTest === "inherit") { return false; }
+    if (stringToTest === "transparent") { return false; }
+
+    var image = document.createElement("img");
+    image.style.color = "rgb(0, 0, 0)";
+    image.style.color = stringToTest;
+    if (image.style.color !== "rgb(0, 0, 0)") { return true; }
+    image.style.color = "rgb(255, 255, 255)";
+    image.style.color = stringToTest;
+    return image.style.color !== "rgb(255, 255, 255)";
+}
