@@ -1,0 +1,19 @@
+<script src="/socket.io/socket.io.js"></script>
+<style>
+#writer {
+    border: 1px solid black;
+  }
+  input {
+    width: 35px;
+  }
+</style>
+<body>
+  <center><h2>SyncDraw<sup>Beta</sup></h2>
+    <p id='chunk'>Chunk: 0,0</p>
+    X: <input id='x' type='number'></input>
+    Y: <input id='y' type='number'></input>
+    <button onclick='move()'>Move</button><br><br>
+    <canvas id='writer'>lolno</canvas>
+    </center>
+</body>
+<script src='/external/cli.js'></script>
