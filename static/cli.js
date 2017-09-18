@@ -161,7 +161,7 @@ drawio = drawio.concat([[pos.x,pos.y,Math.round(touchobj.clientX - rect.left), M
   ctx.strokeStyle = color;
 
 ctx.moveTo(startx, starty);
-drawio = drawio.concat([[pos.x,pos.y,Math.round(startx), Math.round(starty), Math.round(touchobj.clientX), Math.round(touchobj.clientY), color]]);
+drawio = drawio.concat([[pos.x,pos.y,Math.round(startx), Math.round(starty), Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), color]]);
 
 }
 ctx.lineTo(touchobj.clientX - rect.left, touchobj.clientY - rect.top);
