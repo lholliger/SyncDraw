@@ -28,13 +28,17 @@ socket.on("return", function(data) {
     data.forEach(function(write) {
 
         write = write.split("x");
-        ctx.strokeStyle = write[4];
-
-        ctx.moveTo(write[0], write[1]);
-ctx.lineTo(write[2], write[3]);
-ctx.stroke();
+        draw(write[0], write[1], write[2], write[3], write[4]);
     });
 });
+
+function draw(x1,y1, x2, y2, co) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = co;
+      ctx.stroke(); 
+}
 
 socket.on("online", function(data) {
       var x = "";
@@ -116,19 +120,15 @@ var ly = 0;
 canvas.addEventListener('mousemove', function(evt) {
 var mousePos = getMousePos(canvas, evt);
 if (mouseDown) {
-ctx.beginPath();
 if (lx == 0 && ly == 0) {
-  ctx.strokeStyle = color;
-  ctx.moveTo(mousePos.x, mousePos.y);
+    draw(mousePos.x, mousePos.y, mousePos.x, mousePos.y, color);
   drawio = drawio.concat([[pos.x,pos.y,mousePos.x, mousePos.y, mousePos.x, mousePos.y, color]]);
 
 } else {
   drawio = drawio.concat([[pos.x,pos.y,lx, ly, mousePos.x, mousePos.y, color]]);
-  ctx.strokeStyle = color;
-ctx.moveTo(lx, ly);
+    draw(lx, ly, mousePos.x, mousePos.y, color);
 }
-ctx.lineTo(mousePos.x, mousePos.y);
-ctx.stroke();
+
 lx = mousePos.x;
 ly = mousePos.y;
 }
@@ -152,22 +152,16 @@ var rect = canvas.getBoundingClientRect();
 var touchobj = e.changedTouches[0];
 if (touchobj.clientX - rect.left > 1000 || touchobj.clientX - rect.left < 0 || touchobj.clientY - rect.top < 0 || touchobj.clientY - rect.top > 1000) {} else {
 if (startx == 0 && starty == 0) {
-  ctx.strokeStyle = color;
-
-ctx.moveTo(touchobj.clientX - rect.left, touchobj.clientY - rect.top);
+draw(touchobj.clientX - rect.left, touchobj.clientY - rect.top, touchobj.clientX - rect.left, touchobj.clientY - rect.top, color);
 drawio = drawio.concat([[pos.x,pos.y,Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), Math.round(touchobj.clientX), Math.round(touchobj.clientY), color]]);
 
 } else {
-  ctx.strokeStyle = color;
-
-ctx.moveTo(startx, starty);
+draw(startx, starty, touchobj.clientX - rect.left, touchobj.clientY - rect.top, color);
 drawio = drawio.concat([[pos.x,pos.y,Math.round(startx), Math.round(starty), Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), color]]);
 
 }
-ctx.lineTo(touchobj.clientX - rect.left, touchobj.clientY - rect.top);
 startx = touchobj.clientX - rect.left;
 starty = touchobj.clientY - rect.top;
-ctx.stroke();
 
 }
 
@@ -178,7 +172,7 @@ e.preventDefault()
 canvas.addEventListener('touchend', function(e) {
 startx = 0;
 starty = 0;
-}, false)
+}, false);
         socket.emit("reqData", [pos.x,pos.y]);
 
 
