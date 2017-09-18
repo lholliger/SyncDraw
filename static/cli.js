@@ -4,15 +4,35 @@ var cache = [];
 var socket = io();
 
 var pos = new Object();
+
+function get(name){
+if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+  return decodeURIComponent(name[1]);
+}
+if (get("chunk") == null) {
 pos.x = 0;
 pos.y = 0;
+} else {
+    var ch = get("chunk").split(',');
+ pos.x = ch[0];
+ pos.y = ch[1];
+}
+var port = window.location.port;
+if (port == "" || port == 0) {
+    port = "";
+} else {
+    port = ":" + port;   
+}
 document.getElementById("cx").innerHTML = "X: " + pos.x;
 document.getElementById("cy").innerHTML = "Y: " + pos.y;
-pos.x = document.getElementById("x").value = pos.y;
-pos.y = document.getElementById("y").value = pos.x;
+pos.x = document.getElementById("x").value = pos.x;
+pos.y = document.getElementById("y").value = pos.y;
+
+    document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname + port + "?chunk=" + pos.x + "," + pos.y;
 function move() {
   pos.x = document.getElementById("x").value;
   pos.y = document.getElementById("y").value;
+    document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + pos.x + "," + pos.y;
   reset();
   socket.emit("reqData", [pos.x,pos.y]);
   document.getElementById("cx").innerHTML = "X: " + pos.x;
@@ -57,10 +77,6 @@ function scolor() {
   }
 }
 
-function get(name){
-if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
-  return decodeURIComponent(name[1]);
-}
 
 
 var mouseDown = false;
