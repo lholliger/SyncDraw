@@ -21,10 +21,10 @@ function IOBoard(x, y, x2, y2, cX, cY, color) {
     }
 
     if (typeof IOMap[cX][cY] != "undefined") {
-            IOMap[cX][cY].push(x + "x" + y + "x" + x2 + "x" + y2 + "x" + color);
+            IOMap[cX][cY].push(0 + "x" + x + "x" + y + "x" + x2 + "x" + y2 + "x" + color);
     }  else {
         IOMap[cX][cY] = [];
-        IOMap[cX][cY].push(x + "x" + y + "x" + x2 + "x" + y2 + "x" + color);
+        IOMap[cX][cY].push(0 + "x" + x + "x" + y + "x" + x2 + "x" + y2 + "x" + color);
 
     }
     setTimeout(function() {

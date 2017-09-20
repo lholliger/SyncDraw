@@ -1,4 +1,10 @@
+<head>
 <script src="/socket.io/socket.io.js"></script>
+<title>SyncDraw</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
+</head>
 <style>
 * {
   font-family: 'Roboto', sans-serif;
@@ -18,6 +24,14 @@
     margin: 5px;
     border: 0.5px solid lightgray;
   }
+    
+  button {
+     background: lightgray;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 3px;
+    }
 </style>
 <body><br>
   <center><h2>SyncDraw<sup>Beta</sup></h2>
@@ -40,7 +54,7 @@
     <center>
     <h2>Settings</h2>
     <button onclick='reset()'>Clear</button>
-    <hr>
+        <hr><hr>
     <h3>Current Chunk</h3>
     <p id='cx'></p>
     <p id='cy'></p>
@@ -53,11 +67,15 @@
     <button onclick='move()'>Move</button>
 <hr>
   <h3>Custom Color<sup> Beta</sup></h3>
-  #<input id='c' style='width: 55px;'></input>
-  <button onclick='scolor()' >Change Color</button><hr>
+    <input id='colorpicker'>
+
+
 
   </td>
     </tr>
+</table>
+<br>
+<p>Contribute on <a href='https://github.com/DatOneLefty/SyncDraw'>GitHub</a></p>
     </center>
 </body>
 <script src='/external/cli.js?v=4'></script>

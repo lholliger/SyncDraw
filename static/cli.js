@@ -9,6 +9,11 @@ function get(name){
 if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
   return decodeURIComponent(name[1]);
 }
+if (get("delay") == null) {
+ delay = 500;   
+} else {
+ delay = get("delay");   
+}
 if (get("chunk") == null) {
 pos.x = 0;
 pos.y = 0;
@@ -43,12 +48,16 @@ window.setInterval(function(){
 socket.emit("writeData", drawio);
     drawio = [];
         socket.emit("reqData", [pos.x,pos.y]);
-}, 500);
+}, delay);
 socket.on("return", function(data) {
     data.forEach(function(write) {
 
         write = write.split("x");
-        draw(write[0], write[1], write[2], write[3], write[4]);
+        if (write[0] == "0") {
+        draw(write[1], write[2], write[3], write[4], write[5]);
+        } else {
+         console.log(write[0]);   
+        }
     });
 });
 
@@ -206,3 +215,9 @@ starty = 0;
     image.style.color = stringToTest;
     return image.style.color !== "rgb(255, 255, 255)";
 }
+$("#colorpicker").spectrum({
+    color: "#000000",
+    change: function(colors) {
+    color = colors.toHexString();
+}
+});
