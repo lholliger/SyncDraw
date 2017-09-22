@@ -21,6 +21,14 @@ pos.y = 0;
     var ch = get("chunk").split(',');
  pos.x = ch[0];
  pos.y = ch[1];
+
+cverify();
+}
+
+function cverify() {
+  if (pos.x >= 100 || pos.y >= 100){
+    document.getElementById("cinfo").innerHTML = "<font color='red'>This chunk will not show up on the Active Chunks list</font>";
+  }
 }
 var port = window.location.port;
 if (port == "" || port == 0) {
@@ -42,7 +50,7 @@ function move() {
   socket.emit("reqData", [pos.x,pos.y]);
   document.getElementById("cx").innerHTML = "X: " + pos.x;
   document.getElementById("cy").innerHTML = "Y: " + pos.y;
-
+cverify();
 }
 window.setInterval(function(){
 socket.emit("writeData", drawio);
@@ -73,7 +81,11 @@ function draw(x1,y1, x2, y2, co, s) {
 socket.on("online", function(data) {
       var x = "";
   data.forEach(function(element) {
-    x += element[0] + ", " + element[1] + "<br>";
+    var p = "";
+    if (pos.x == element[0] && pos.y == element[1]) {
+      p = "(you) ";
+    }
+    x += p + " <a href='?=chunk=" + element[0] + "," + element[1] + "'>" + element[0] + ", " + element[1] + "</a><br>";
    });
    document.getElementById("use").innerHTML = x;
 

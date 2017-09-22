@@ -87,7 +87,9 @@ function getUse() {
     var yc = Object.keys(IOMap[element]);
       yc.forEach(function (element2){
         if (!isNaN(element) && !isNaN(element2)) {
+          if (element >= 100 || element2 >= 100){} else {
     t = t.concat([[element, element2]]);
+}
 }
   });
   });
