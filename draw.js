@@ -51,7 +51,9 @@ io.on('connection', function(socket){
 
 var chunkX = data[0];
 var chunkY = data[1];
-        socket.emit("return", IOCGet(chunkX, chunkY))
+if (!isNaN(chunkX) && !isNaN(chunkY)) {
+        socket.emit("return", IOCGet(chunkX, chunkY));
+      };
     });
 
     socket.on("writeData", function(dataz) {
@@ -66,7 +68,9 @@ var chunkY = data[1];
     6: color
     7: size
     */
+    if (!isNaN(data[2]) && !isNaN(data[3])) {
         IOBoard(data[2],data[3],data[4],data[5],data[0],data[1], data[6], data[7]);
+      }
 
           });
     });
@@ -82,7 +86,9 @@ function getUse() {
   xes.forEach(function (element){
     var yc = Object.keys(IOMap[element]);
       yc.forEach(function (element2){
+        if (!isNaN(element) && !isNaN(element2)) {
     t = t.concat([[element, element2]]);
+}
   });
   });
   io.emit("online", t);
