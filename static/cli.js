@@ -10,7 +10,7 @@ if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.s
   return decodeURIComponent(name[1]);
 }
 if (get("delay") == null) {
- delay = 500;
+ delay = 100;
 } else {
  delay = get("delay");
 }

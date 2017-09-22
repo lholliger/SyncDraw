@@ -29,7 +29,7 @@ function IOBoard(x, y, x2, y2, cX, cY, color, size) {
     }
     setTimeout(function() {
       IOMap[cX][cY].shift();
-    }, 2000);
+    }, 500);
 }
 
 function IOCGet(cX,cY) {
