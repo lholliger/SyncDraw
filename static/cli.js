@@ -10,9 +10,9 @@ if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.s
   return decodeURIComponent(name[1]);
 }
 if (get("delay") == null) {
- delay = 500;   
+ delay = 500;
 } else {
- delay = get("delay");   
+ delay = get("delay");
 }
 if (get("chunk") == null) {
 pos.x = 0;
@@ -26,7 +26,7 @@ var port = window.location.port;
 if (port == "" || port == 0) {
     port = "";
 } else {
-    port = ":" + port;   
+    port = ":" + port;
 }
 document.getElementById("cx").innerHTML = "X: " + pos.x;
 document.getElementById("cy").innerHTML = "Y: " + pos.y;
@@ -54,19 +54,20 @@ socket.on("return", function(data) {
 
         write = write.split("x");
         if (write[0] == "0") {
-        draw(write[1], write[2], write[3], write[4], write[5]);
+        draw(write[1], write[2], write[3], write[4], write[5], write[6]);
         } else {
-         console.log(write[0]);   
+         console.log(write[0]);
         }
     });
 });
 
-function draw(x1,y1, x2, y2, co) {
+function draw(x1,y1, x2, y2, co, s) {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
+      ctx.lineWidth=s;
       ctx.strokeStyle = co;
-      ctx.stroke(); 
+      ctx.stroke();
 }
 
 socket.on("online", function(data) {
@@ -146,12 +147,12 @@ canvas.addEventListener('mousemove', function(evt) {
 var mousePos = getMousePos(canvas, evt);
 if (mouseDown) {
 if (lx == 0 && ly == 0) {
-    draw(mousePos.x, mousePos.y, mousePos.x, mousePos.y, color);
-  drawio = drawio.concat([[pos.x,pos.y,mousePos.x, mousePos.y, mousePos.x, mousePos.y, color]]);
+    draw(mousePos.x, mousePos.y, mousePos.x, mousePos.y, color, size);
+  drawio = drawio.concat([[pos.x,pos.y,mousePos.x, mousePos.y, mousePos.x, mousePos.y, color, size]]);
 
 } else {
-  drawio = drawio.concat([[pos.x,pos.y,lx, ly, mousePos.x, mousePos.y, color]]);
-    draw(lx, ly, mousePos.x, mousePos.y, color);
+  drawio = drawio.concat([[pos.x,pos.y,lx, ly, mousePos.x, mousePos.y, color, size]]);
+    draw(lx, ly, mousePos.x, mousePos.y, color, size);
 }
 
 lx = mousePos.x;
@@ -177,12 +178,12 @@ var rect = canvas.getBoundingClientRect();
 var touchobj = e.changedTouches[0];
 if (touchobj.clientX - rect.left > 1000 || touchobj.clientX - rect.left < 0 || touchobj.clientY - rect.top < 0 || touchobj.clientY - rect.top > 1000) {} else {
 if (startx == 0 && starty == 0) {
-draw(touchobj.clientX - rect.left, touchobj.clientY - rect.top, touchobj.clientX - rect.left, touchobj.clientY - rect.top, color);
-drawio = drawio.concat([[pos.x,pos.y,Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), Math.round(touchobj.clientX), Math.round(touchobj.clientY), color]]);
+draw(touchobj.clientX - rect.left, touchobj.clientY - rect.top, touchobj.clientX - rect.left, touchobj.clientY - rect.top, color, size);
+drawio = drawio.concat([[pos.x,pos.y,Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), Math.round(touchobj.clientX), Math.round(touchobj.clientY), color, size]]);
 
 } else {
-draw(startx, starty, touchobj.clientX - rect.left, touchobj.clientY - rect.top, color);
-drawio = drawio.concat([[pos.x,pos.y,Math.round(startx), Math.round(starty), Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), color]]);
+draw(startx, starty, touchobj.clientX - rect.left, touchobj.clientY - rect.top, color, size);
+drawio = drawio.concat([[pos.x,pos.y,Math.round(startx), Math.round(starty), Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), color, size]]);
 
 }
 startx = touchobj.clientX - rect.left;
@@ -221,3 +222,8 @@ $("#colorpicker").spectrum({
     color = colors.toHexString();
 }
 });
+
+function setSize() {
+  size = document.getElementById("size").value;
+}
+var size = 1;

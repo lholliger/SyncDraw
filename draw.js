@@ -13,7 +13,7 @@ app.use('/external/', express.static(__dirname + "/static/"));
 
 var IOMap = new Object();
 
-function IOBoard(x, y, x2, y2, cX, cY, color) {
+function IOBoard(x, y, x2, y2, cX, cY, color, size) {
     if (typeof IOMap[cX] != "undefined") {
 
     } else {
@@ -21,10 +21,10 @@ function IOBoard(x, y, x2, y2, cX, cY, color) {
     }
 
     if (typeof IOMap[cX][cY] != "undefined") {
-            IOMap[cX][cY].push(0 + "x" + x + "x" + y + "x" + x2 + "x" + y2 + "x" + color);
+            IOMap[cX][cY].push(0 + "x" + x + "x" + y + "x" + x2 + "x" + y2 + "x" + color + "x" + size);
     }  else {
         IOMap[cX][cY] = [];
-        IOMap[cX][cY].push(0 + "x" + x + "x" + y + "x" + x2 + "x" + y2 + "x" + color);
+        IOMap[cX][cY].push(0 + "x" + x + "x" + y + "x" + x2 + "x" + y2 + "x" + color + "x" + size);
 
     }
     setTimeout(function() {
@@ -64,8 +64,9 @@ var chunkY = data[1];
     4: endx
     5: endy
     6: color
+    7: size
     */
-        IOBoard(data[2],data[3],data[4],data[5],data[0],data[1], data[6]);
+        IOBoard(data[2],data[3],data[4],data[5],data[0],data[1], data[6], data[7]);
 
           });
     });
