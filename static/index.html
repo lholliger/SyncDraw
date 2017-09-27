@@ -59,7 +59,7 @@ a {
     <center>
     <h2>Settings</h2>
     <button onclick='reset()'>Clear</button>
-        <hr><hr>
+        <hr>
     <h3>Current Chunk</h3>
     <p id='cx'></p>
     <p id='cy'></p>
@@ -74,8 +74,10 @@ a {
   <h3>Customize Pen<sup> Beta</sup></h3>
     <input id='colorpicker'><br>
     <input id='size' type='number'><button onclick='setSize()'>Change Size</button>
-
-
+    <hr>
+      <h3>Share<sup> Beta</sup></h3>
+      <div id='ShareCode'><button onclick='get_uuid()'>Get Share Code</button></div><br>
+      <input id='scre' type='number'><button onclick='sharerestore()'>Restore</button>
   </td>
     </tr>
 </table>

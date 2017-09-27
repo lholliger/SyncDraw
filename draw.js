@@ -10,7 +10,6 @@ app.get('/', function(req, res){
 });
 app.use('/external/', express.static(__dirname + "/static/"));
 
-
 var IOMap = new Object();
 
 function IOBoard(x, y, x2, y2, cX, cY, color, size) {
@@ -21,15 +20,59 @@ function IOBoard(x, y, x2, y2, cX, cY, color, size) {
     }
 
     if (typeof IOMap[cX][cY] != "undefined") {
-            IOMap[cX][cY].push(0 + "x" + x + "x" + y + "x" + x2 + "x" + y2 + "x" + color + "x" + size);
+            IOMap[cX][cY].push(0 + "|" + x + "|" + y + "|" + x2 + "|" + y2 + "|" + color + "|" + size);
     }  else {
         IOMap[cX][cY] = [];
-        IOMap[cX][cY].push(0 + "x" + x + "x" + y + "x" + x2 + "x" + y2 + "x" + color + "x" + size);
+            IOMap[cX][cY].push(0 + "|" + x + "|" + y + "|" + x2 + "|" + y2 + "|" + color + "|" + size);
 
     }
     setTimeout(function() {
       IOMap[cX][cY].shift();
     }, 1000);
+}
+
+function IOAddShare(uuid, data,cX,cY) {
+    if (typeof IOMap[cX] != "undefined") {
+
+    } else {
+        IOMap[cX] = new Object();
+    }
+
+    if (typeof IOMap[cX][cY] != "undefined") {
+            IOMap[cX][cY].push(2 + "|" + data + "|" + uuid);
+    }  else {
+        IOMap[cX][cY] = [];
+        IOMap[cX][cY].push(2 + "|" + data + "|" + uuid);
+
+    }
+    setTimeout(function() {
+      IOMap[cX][cY].shift();
+    }, 1000);
+}
+
+
+function IOAddRecieve(uuid,cX,cY) {
+    if (typeof IOMap[cX] != "undefined") {
+
+    } else {
+        IOMap[cX] = new Object();
+    }
+
+    if (typeof IOMap[cX][cY] != "undefined") {
+            IOMap[cX][cY].push(1 + "|" + uuid);
+    }  else {
+        IOMap[cX][cY] = [];
+        IOMap[cX][cY].push(1 + "|" + uuid);
+
+    }
+    setTimeout(function() {
+      IOMap[cX][cY].shift();
+    }, 1000);
+}
+
+function IOShare(x, y) {
+    var uuid = Math.floor(Math.random() * 90000) + 10000;
+    return uuid;
 }
 
 function IOCGet(cX,cY) {
@@ -47,6 +90,11 @@ function IOCGet(cX,cY) {
     return IOMap[cX][cY];
 }
 io.on('connection', function(socket){
+    
+    socket.on("get_uuid", function(dat) {
+       socket.emit("rec_uuid", IOShare(dat.x, dat.y)); 
+    });
+    
     socket.on("reqData", function(data) {
 
 var chunkX = data[0];
@@ -68,10 +116,25 @@ if (!isNaN(chunkX) && !isNaN(chunkY)) {
     6: color
     7: size
     */
+            
+            /*
+            0: informer
+            1: uuid
+            2: data
+            3: x
+            4: y
+            */
+            
+            if (data[0] == "XOS") {
+            IOAddShare(data[1], data[2], data[3], data[4]);
+            } else if (data[0] == "GS")  {
+            IOAddRecieve(data[1], data[2], data[3]);
+            } else {
     if (!isNaN(data[2]) && !isNaN(data[3])) {
         IOBoard(data[2],data[3],data[4],data[5],data[0],data[1], data[6], data[7]);
       }
 
+            }
           });
     });
 });

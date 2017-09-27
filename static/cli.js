@@ -25,6 +25,12 @@ pos.y = 0;
 cverify();
 }
 
+if (get("share") == null) {
+    var rrid = 0;
+} else {
+ var rrid = get("share");  
+ drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
+}
 function cverify() {
   if (pos.x >= 100 || pos.y >= 100){
     document.getElementById("cinfo").innerHTML = "<font color='red'>This chunk will not show up on the Active Chunks list</font>";
@@ -59,11 +65,26 @@ socket.emit("writeData", drawio);
 }, delay);
 socket.on("return", function(data) {
     data.forEach(function(write) {
-
-        write = write.split("x");
+        write = write.split("|");
         if (write[0] == "0") {
         draw(write[1], write[2], write[3], write[4], write[5], write[6]);
-        } else {
+        } 
+        else if(write[0] == "1") { 
+            if (shuuid == write[1]) {
+                drawio = drawio.concat([["XOS", shuuid, document.getElementById("writer").toDataURL("image/jpeg"), pos.x, pos.y]]);            }
+        } else if (write[0] == "2") {
+            if (rrid != 0) {
+                if (rrid == write[2]) {
+                 var image = new Image();
+                    image.onload = function() {
+                    ctx.drawImage(image, 0, 0);
+                    };
+                image.src = write[1];
+                }
+            }
+        }
+        
+         else {
          console.log(write[0]);
         }
     });
@@ -85,7 +106,7 @@ socket.on("online", function(data) {
     if (pos.x == element[0] && pos.y == element[1]) {
       p = "(you) ";
     }
-    x += p + " <a href='?=chunk=" + element[0] + "," + element[1] + "'>" + element[0] + ", " + element[1] + "</a><br>";
+    x += p + " <a href='?chunk=" + element[0] + "," + element[1] + "'>" + element[0] + ", " + element[1] + "</a><br>";
    });
    document.getElementById("use").innerHTML = x;
 
@@ -239,3 +260,23 @@ function setSize() {
   size = document.getElementById("size").value;
 }
 var size = 1;
+
+function get_uuid() {
+    if (shuuid == 0) {
+socket.emit("get_uuid", [pos.x,pos.y]);  
+    } else {
+    alert("You have already gotten a share id!");
+    }
+}
+var shuuid = 0;
+socket.on("rec_uuid", function(id) {
+    shuuid = id;
+    document.getElementById("ShareCode").innerHTML = "Your code: <b>" + shuuid + "</b><br><br>You can send them the share link a few lines up too";
+        document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + pos.x + "," + pos.y + "&share=" + shuuid;
+});
+
+function sharerestore() {
+    reset();
+     rrid = document.getElementById("scre").value; 
+ drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
+}
