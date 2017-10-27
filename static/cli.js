@@ -117,10 +117,15 @@ socket.on("online", function(data) {
     x += p + " <a href='?chunk=" + element[1] + "," + element[2] + "'>" + element[1] + ", " + element[2] + "</a><br>";
       } else {
           if (element[3] == null) {} else {
-            x += " <a onclick='restoreFromClick("+ element[3] +");'>"+ element[1] + ", " + element[2] + " (" + element[3] + ")</a><br>";
+              if (element[3] == shuuid) {
+              var p = "(you) ";   
+              } else {
+              var p = "";
+   
+              }
+            x += p +" <a onclick='restoreFromClick("+ element[3] +");'>"+ element[1] + ", " + element[2] + " (" + element[3] + ")</a><br>";
           }          
       }
-      
       });
    document.getElementById("use").innerHTML = x;
 
