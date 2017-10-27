@@ -1,0 +1,39 @@
+* {
+  font-family: 'Roboto', sans-serif;
+
+}
+a {
+  text-decoration: none;
+  color: blue;
+}
+#writer {
+    border: 1px solid black;
+  }
+  input {
+    width: 35px;
+  }
+  td {
+    border: 1px solid white;
+    vertical-align: top;
+  }
+  hr {
+    margin: 5px;
+    border: 0.5px solid lightgray;
+  }
+
+  button {
+     background: lightgray;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 3px;
+    }
+
+.sharelink {
+max-width: 250px;
+width: auto;
+}
+
+#scre {
+    width: 60px;
+        }

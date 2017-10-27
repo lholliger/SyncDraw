@@ -63,6 +63,14 @@ socket.emit("writeData", drawio);
     drawio = [];
         socket.emit("reqData", [pos.x,pos.y]);
 }, delay);
+setInterval(function() {
+       if (document.getElementById("sharebox").checked == true) {
+    socket.emit("shareCode", [shuuid, pos.x, pos.y, true]);
+       } else {
+           socket.emit("shareCode", [shuuid, pos.x, pos.y, false]);
+
+       }
+}, 1000);
 socket.on("return", function(data) {
     data.forEach(function(write) {
         write = write.split("|");
@@ -85,7 +93,6 @@ socket.on("return", function(data) {
         }
         
          else {
-         console.log(write[0]);
         }
     });
 });
@@ -102,12 +109,19 @@ function draw(x1,y1, x2, y2, co, s) {
 socket.on("online", function(data) {
       var x = "";
   data.forEach(function(element) {
+      if (element[0] == 0) {
     var p = "";
-    if (pos.x == element[0] && pos.y == element[1]) {
+    if (pos.x == element[1] && pos.y == element[2]) {
       p = "(you) ";
     }
-    x += p + " <a href='?chunk=" + element[0] + "," + element[1] + "'>" + element[0] + ", " + element[1] + "</a><br>";
-   });
+    x += p + " <a href='?chunk=" + element[1] + "," + element[2] + "'>" + element[1] + ", " + element[2] + "</a><br>";
+      } else {
+          if (element[3] == null) {} else {
+            x += " <a onclick='restoreFromClick("+ element[3] +");'>"+ element[1] + ", " + element[2] + " (" + element[3] + ")</a><br>";
+          }          
+      }
+      
+      });
    document.getElementById("use").innerHTML = x;
 
 });
@@ -120,12 +134,14 @@ function scolor() {
   }
 }
 
-
+function restoreFromClick(code) {
+    rrid = code;
+    drawio = drawio.concat([['GS', rrid, pos.x, pos.y]]);
+}
 
 var mouseDown = false;
 document.body.onmousedown = function() {
 mouseDown = true;
-console.log("down");
 }
 document.body.onmouseup = function() {
 mouseDown = false;
@@ -271,7 +287,7 @@ socket.emit("get_uuid", [pos.x,pos.y]);
 var shuuid = 0;
 socket.on("rec_uuid", function(id) {
     shuuid = id;
-    document.getElementById("ShareCode").innerHTML = "Your code: <b>" + shuuid + "</b><br><br>You can send them the share link a few lines up too";
+    document.getElementById("ShareCode").innerHTML = "Your code: <b>" + shuuid;
         document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + pos.x + "," + pos.y + "&share=" + shuuid;
 });
 
@@ -280,3 +296,10 @@ function sharerestore() {
      rrid = document.getElementById("scre").value; 
  drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
 }
+
+
+document.getElementById("size").addEventListener('input', function (evt) {
+    setSize();
+});
+
+get_uuid(); // this makes stuff more automatic and easy

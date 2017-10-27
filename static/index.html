@@ -3,39 +3,15 @@
 <title>SyncDraw</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
+
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
+    
+
+<link rel="stylesheet" type="text/css" href="/external/sync.css">
+
 </head>
 <style>
-* {
-  font-family: 'Roboto', sans-serif;
 
-}
-a {
-  text-decoration: none;
-  color: blue;
-}
-#writer {
-    border: 1px solid black;
-  }
-  input {
-    width: 35px;
-  }
-  td {
-    border: 1px solid white;
-    vertical-align: top;
-  }
-  hr {
-    margin: 5px;
-    border: 0.5px solid lightgray;
-  }
-
-  button {
-     background: lightgray;
-        border: 1px solid lightgray;
-        border-radius: 5px;
-        padding: 5px;
-        margin: 3px;
-    }
 </style>
 <body><br>
   <center><h2>SyncDraw<sup>Beta</sup></h2>
@@ -64,7 +40,7 @@ a {
     <p id='cx'></p>
     <p id='cy'></p>
         <p>Sharable link:</p>
-        <input id='link' style='width: 100%;' disabled></input>
+        <input id='link' class='sharelink' disabled></input>
     <hr>
     <h3>Change Chunk</h3>
     X: <input id='x' type='number'></input>
@@ -72,11 +48,12 @@ a {
     <button onclick='move()'>Move</button>
 <hr>
   <h3>Customize Pen<sup> Beta</sup></h3>
-    <input id='colorpicker'><br>
-    <input id='size' type='number'><button onclick='setSize()'>Change Size</button>
+    <input id='colorpicker'><br><br>
+    Size: <input id='size' type='number'> px
     <hr>
       <h3>Share<sup> Beta</sup></h3>
-      <div id='ShareCode'><button onclick='get_uuid()'>Get Share Code</button></div><br>
+      <div id='ShareCode'>error</div><br>
+      <input id="sharebox" type="checkbox"> Make code public<br>
       <input id='scre' type='number'><button onclick='sharerestore()'>Restore</button>
   </td>
     </tr>
@@ -86,3 +63,4 @@ a {
     </center>
 </body>
 <script src='/external/cli.js?v=9'></script>
+  

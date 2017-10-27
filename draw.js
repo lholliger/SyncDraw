@@ -11,7 +11,7 @@ app.get('/', function(req, res){
 app.use('/external/', express.static(__dirname + "/static/"));
 
 var IOMap = new Object();
-
+var IOUUID = new Object();
 function IOBoard(x, y, x2, y2, cX, cY, color, size) {
     if (typeof IOMap[cX] != "undefined") {
 
@@ -50,6 +50,26 @@ function IOAddShare(uuid, data,cX,cY) {
     }, 1000);
 }
 
+function IOShareUUID(uuid,cX,cY) {
+    if (typeof IOUUID[cX] != "undefined") {
+
+    } else {
+        IOUUID[cX] = new Object();
+    }
+
+    if (typeof IOUUID[cX][cY] != "undefined") {
+            IOUUID[cX][cY].push(uuid);
+    }  else {
+        IOUUID[cX][cY] = [];
+        IOUUID[cX][cY].push(uuid);
+
+    }
+    setTimeout(function() {
+      IOUUID[cX][cY].shift();
+    }, 2000);
+}
+
+
 
 function IOAddRecieve(uuid,cX,cY) {
     if (typeof IOMap[cX] != "undefined") {
@@ -63,6 +83,25 @@ function IOAddRecieve(uuid,cX,cY) {
     }  else {
         IOMap[cX][cY] = [];
         IOMap[cX][cY].push(1 + "|" + uuid);
+
+    }
+    setTimeout(function() {
+      IOMap[cX][cY].shift();
+    }, 1000);
+}
+
+function IOKeepMap(cX,cY) {
+    if (typeof IOMap[cX] != "undefined") {
+
+    } else {
+        IOMap[cX] = new Object();
+    }
+
+    if (typeof IOMap[cX][cY] != "undefined") {
+            IOMap[cX][cY].push("3" + "|");
+    }  else {
+        IOMap[cX][cY] = [];
+        IOMap[cX][cY].push("3" + "|");
 
     }
     setTimeout(function() {
@@ -90,7 +129,17 @@ function IOCGet(cX,cY) {
     return IOMap[cX][cY];
 }
 io.on('connection', function(socket){
-    
+    socket.on("shareCode", function(dat) {
+        if (!isNaN(dat[0]) && String(dat[0]).length == 5)  {
+        if (dat[3] == true) {
+         IOShareUUID(dat[0], dat[1], dat[2]);   
+         IOKeepMap(dat[1], dat[2]);
+
+        } else {
+         IOKeepMap(dat[1], dat[2]);
+        }
+        }
+        });
     socket.on("get_uuid", function(dat) {
        socket.emit("rec_uuid", IOShare(dat.x, dat.y)); 
     });
@@ -151,13 +200,26 @@ function getUse() {
       yc.forEach(function (element2){
         if (!isNaN(element) && !isNaN(element2)) {
           if (element >= 100 || element2 >= 100){} else {
-    t = t.concat([[element, element2]]);
-}
+    t = t.concat([[0, element, element2]]);
+
+          
+          }
 }
   });
   });
+
+    
+    var n = Object.keys(IOUUID);
+    n.forEach(function(element) {
+     var n2 = Object.keys(IOUUID[element]);
+        n2.forEach(function(element2) {
+           t = t.concat([[1, element, element2, IOUUID[element][element2][0]]]); 
+        });
+    })
+    
   io.emit("online", t);
-  return 0;
+    return 0;
+
 }
 
 function clean() {
