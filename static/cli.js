@@ -292,7 +292,7 @@ socket.emit("get_uuid", [pos.x,pos.y]);
 var shuuid = 0;
 socket.on("rec_uuid", function(id) {
     shuuid = id;
-    document.getElementById("ShareCode").innerHTML = "Your code: <b>" + shuuid;
+    document.getElementById("ShareCode").innerHTML = "Your share code: <b>" + shuuid;
         document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + pos.x + "," + pos.y + "&share=" + shuuid;
 });
 

@@ -7,7 +7,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
     
 
-<link rel="stylesheet" type="text/css" href="/external/sync.css">
+<link rel="stylesheet" type="text/css" href="/external/sync.css?v=2">
 
 </head>
 <style>
@@ -34,7 +34,10 @@
     </div>
     <center>
     <h2>Settings</h2>
-    <button onclick='reset()'>Clear</button>
+    <button onclick='reset()'>Clear</button><br><br>
+       <div id='ShareCode'>error</div>
+      <input id="sharebox" type="checkbox"> Make code public<br>
+      <input id='scre' type='number'><button onclick='sharerestore()'>Restore</button>
         <hr>
     <h3>Current Chunk</h3>
     <p id='cx'></p>
@@ -51,10 +54,6 @@
     <input id='colorpicker'><br><br>
     Size: <input id='size' type='number'> px
     <hr>
-      <h3>Share<sup> Beta</sup></h3>
-      <div id='ShareCode'>error</div><br>
-      <input id="sharebox" type="checkbox"> Make code public<br>
-      <input id='scre' type='number'><button onclick='sharerestore()'>Restore</button>
   </td>
     </tr>
 </table>
@@ -62,5 +61,5 @@
 <p>Contribute on <a href='https://github.com/DatOneLefty/SyncDraw'>GitHub</a></p>
     </center>
 </body>
-<script src='/external/cli.js?v=9'></script>
+<script src='/external/cli.js?v=11'></script>
   
