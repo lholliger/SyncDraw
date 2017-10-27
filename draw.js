@@ -194,19 +194,7 @@ http.listen(port, function(){
 });
 function getUse() {
   var t = [];
-  var xes = Object.keys(IOMap);
-  xes.forEach(function (element){
-    var yc = Object.keys(IOMap[element]);
-      yc.forEach(function (element2){
-        if (!isNaN(element) && !isNaN(element2)) {
-          if (element >= 100 || element2 >= 100){} else {
-    t = t.concat([[0, element, element2]]);
 
-          
-          }
-}
-  });
-  });
 
     
     var n = Object.keys(IOUUID);
@@ -243,4 +231,4 @@ setInterval(function() {
 }, 5000);
 setInterval(function() {
   getUse();
-}, 5000);
+}, 2500);
