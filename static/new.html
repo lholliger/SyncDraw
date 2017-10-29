@@ -46,7 +46,7 @@ document.getElementById("s_draw").checked]);
 var socket = io();
 
 socket.on("room_created", function(ret) {
-  document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&CCX=" + ret[2];
+  document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&CCX=" + ret[2] + "&a=1";
 });
 var port = window.location.port;
 if (port == "" || port == 0) {

@@ -10,6 +10,7 @@ if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.s
   return decodeURIComponent(name[1]);
 }
 
+
 if (get("settings") == null) {
 var allowDrawing = true;
 } else {
@@ -353,6 +354,9 @@ socket.on("rec_uuid", function(id) {
     shuuid = id;
     document.getElementById("ShareCode").innerHTML =  shuuid;
     document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "/join#" +shuuid;
+if (get("a") == 1) {
+    document.getElementById("cinfo").innerHTML = "<h2>Go to <font color='blue'>https://syncdraw.lefty.cf/join</font> and enter the code <font color='blue'>" + shuuid + "</font>!</h2>";
+}
 });
 
 socket.on("uuid_info", function(ret) {

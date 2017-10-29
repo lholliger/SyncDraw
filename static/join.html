@@ -61,10 +61,11 @@ function join() {
 
 }
 
+console.log(window.location.hash.substr(1));
 
-if (window.location.hash.substr(1) != null) {
+if (window.location.hash.substr(1) != "") {
   document.getElementById("joinCode").value = window.location.hash.substr(1);
-  join()
+  join();
 }
 var port = window.location.port;
 if (port == "" || port == 0) {
