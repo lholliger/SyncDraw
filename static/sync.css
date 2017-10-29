@@ -184,3 +184,11 @@ input.move {
 #shareCode:hover {
     color: #f1f1f1;
 }
+
+.usi {
+  width: 90%;
+  background: none;
+  border-radius: 3px;
+  padding: 3px;
+  border: 1px solid gray;
+}

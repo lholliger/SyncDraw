@@ -21,12 +21,14 @@ app.use('/external/', express.static(__dirname + "/static/"));
 var IOMap = new Object();
 var IOUUID = new Object();
 function IOBoard(x, y, x2, y2, cX, cY, color, size, CCX) {
+  CCX = parseInt(CCX);
     if (typeof IOMap[cX] != "undefined") {
 
     } else {
         IOMap[cX] = new Object();
     }
     var s = getSettings(cX,cY);
+
     if (typeof IOMap[cX][cY] != "undefined") {
       if (s[3]==1 ) {
             IOMap[cX][cY].push(0 + "|" + x + "|" + y + "|" + x2 + "|" + y2 + "|" + color + "|" + size);
@@ -34,7 +36,7 @@ function IOBoard(x, y, x2, y2, cX, cY, color, size, CCX) {
               IOMap[cX][cY].shift();
             }, 1000);
     } else {
-      if (s[4] == CCX) {
+      if (s[4].indexOf(CCX) > -1) {
         IOMap[cX][cY].push(0 + "|" + x + "|" + y + "|" + x2 + "|" + y2 + "|" + color + "|" + size);
         setTimeout(function() {
           IOMap[cX][cY].shift();
@@ -50,7 +52,7 @@ function IOBoard(x, y, x2, y2, cX, cY, color, size, CCX) {
               IOMap[cX][cY].shift();
             }, 1000);
 } else {
-  if (s[4] == CCX) {
+  if (s[4].indexOf(CCX) > -1) {
   IOMap[cX][cY] = [];
       IOMap[cX][cY].push(0 + "|" + x + "|" + y + "|" + x2 + "|" + y2 + "|" + color + "|" + size);
 
@@ -120,6 +122,31 @@ function IOAddRecieve(uuid,cX,cY) {
       IOMap[cX][cY].shift();
     }, 1000);
 }
+
+
+function IOUsername(cX, cY, uuid, name) {
+  name = name.replace("<", "&#60;");
+  name = name.replace(">", "&#62;");
+
+    if (typeof IOMap[cX] != "undefined") {
+
+    } else {
+        IOMap[cX] = new Object();
+    }
+
+    if (typeof IOMap[cX][cY] != "undefined") {
+            IOMap[cX][cY].push(4 + "|" + uuid + "|" + name);
+    }  else {
+        IOMap[cX][cY] = [];
+        IOMap[cX][cY].push(4 + "|" + uuid + "|" + name);
+
+    }
+    setTimeout(function() {
+      IOMap[cX][cY].shift();
+    }, 1000);
+}
+
+
 var UUIDKeeper = new Object();
 function ValidUUID(uuid,cX,cY) {
   UUIDKeeper[uuid] = [cX, cY];
@@ -157,7 +184,7 @@ function roomSettings(cX, cY, a,b,c,d, X) {
   RS[cX] = new Object();
 }
 
-RS[cX][cY] = [a,b,c,d, X];
+RS[cX][cY] = [a,b,c,d, [X]];
 }
 
 function getSettings(cX,cY,CCX) {
@@ -168,14 +195,14 @@ function getSettings(cX,cY,CCX) {
 }
 if (typeof RS[cX][cY] != "undefined") {
 } else {
-RS[cX][cY] = [1,1,1,1, 0];
+RS[cX][cY] = [1,1,1,1, [0]];
 }
 
-if (RS[cX][cY][4] == 0) {
+if (RS[cX][cY][4] == [0]) {
 return RS[cX][cY];
 } else {
-  if (RS[cX][cY][4] == CCX) {
-    return [1,1,1,1,0];
+    if (RS[cX][cY][4].indexOf(CCX) > -1) {
+    return [1,1,1,1,[0]];
 
   } else {
 
@@ -192,7 +219,31 @@ function getESettings(x,y) {
 
 }
 io.on('connection', function(socket){
+socket.on("allowed", function(dat) {
+  var s = getSettings(dat[0],dat[1], dat[2]);
+  if (s[3] == false) {
+  if (s[4].indexOf(parseInt(dat[2])) > -1) {
+    socket.emit("a_allowed", true);
+  } else {
+    socket.emit("a_allowed", false);
 
+  }
+} else {
+  socket.emit("a_allowed", true);
+
+}
+
+});
+socket.on("allowAccess", function(dat) {
+  if (dat[2] == 1) {
+    RS[dat[3]][dat[4]][4].push(parseInt(dat[1].substring(2)));
+  } else {
+    var index = RS[dat[3]][dat[4]][4].indexOf(parseInt(dat[1].substring(2)));    // <-- Not supported in <IE9
+    if (index !== -1) {
+      RS[dat[3]][dat[4]][4].splice(index, 1);
+}
+  }
+});
 socket.on("getSettings", function(x,y, ccx) {
   socket.emit("roomSettings", getSettings(x,y, ccx));
 })
@@ -260,7 +311,9 @@ if (!isNaN(chunkX) && !isNaN(chunkY)) {
             IOAddShare(data[1], data[2], data[3], data[4]);
             } else if (data[0] == "GS")  {
             IOAddRecieve(data[1], data[2], data[3]);
-            } else {
+          } else if (data[0] == "USN") {
+            IOUsername(data[1], data[2], data[3], data[4].substring(0,20));
+          } else {
     if (!isNaN(data[2]) && !isNaN(data[3])) {
         IOBoard(data[2],data[3],data[4],data[5],data[0],data[1], data[6], data[7], data[8]);
       }

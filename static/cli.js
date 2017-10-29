@@ -1,6 +1,6 @@
 var drawio = [];
 var cache = [];
-
+var usernames = [];
 var socket = io();
 
 var pos = new Object();
@@ -11,6 +11,11 @@ if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.s
 }
 
 
+if (get("username") == null) {
+  document.getElementById("username").value = "Anonymous";
+} else {
+  document.getElementById("username").value = get("username");
+}
 if (get("settings") == null) {
 var allowDrawing = true;
 } else {
@@ -18,7 +23,7 @@ var  c = get("settings");
 c = JSON.parse("[" + c + "]");
 var allowDrawing = c[3];
 if (c[0] == false) {
-  document.getElementById("chat").style.display = "none";
+  document.getElementById("ponline").style.display = "none";
 }
 if (c[1] == false) {
   document.getElementById("use").style.display = "none";
@@ -28,14 +33,12 @@ if (c[2] == false) {
   document.getElementById("sp").innerHTML = '<span class="nav" style="cursor:pointer" >SyncDraw</span>';
 }
 
-if (c[3] == false) {
-  document.getElementById("controlCenter").style.display = "none";
-}
 }
 
 
 if (get("CCX") == null) {
-  var CCX = 0;
+  var CCX = Math.floor(Math.random() * 90000) + 10000;
+
 } else {
 var CCX = get("CCX");
 }
@@ -99,8 +102,60 @@ window.setInterval(function(){
            socket.emit("shareCode", [shuuid, pos.x, pos.y, false]);
        }
 }, 1000);
+var admin = get("a");
+var rw = get("rw");
+if (admin  == "1") {
+  var alACC = [];
+}
+window.setInterval(function(){
+var a = "";
+if (admin == "1" && rw != "1") {
+  usernames.forEach(function(u) {
+    if (alACC.includes("a_" + u[0])) {
+      a += '<input type="checkbox" id="a_' + u[0] + '" checked>' + "<a>" + u[1] + "</a><br>";
+
+    } else {
+    a += '<input type="checkbox" id="a_' + u[0] + '">' + "<a>" + u[1] + "</a><br>";
+}
 
 
+
+  });
+  document.getElementById("ponline").innerHTML = a;
+
+  if (admin == "1" && rw != "1") {
+    usernames.forEach(function(u) {
+
+      document.getElementById("a_" + u[0]).addEventListener( 'change', function() {
+      if(this.checked) {
+          socket.emit("allowAccess", [CCX, this.id, 1, pos.x, pos.y]);
+          alACC.push(this.id);
+      } else {
+        socket.emit("allowAccess", [CCX, this.id, 0, pos.x, pos.y]);
+        var index = alACC.indexOf(this.id);    // <-- Not supported in <IE9
+        if (index !== -1) {
+          alACC.splice(index, 1);
+  }
+      }
+  });
+
+});
+  }
+  drawio = drawio.concat([["USN", pos.x, pos.y, CCX, document.getElementById("username").value]]);
+
+} else {
+       usernames.forEach(function(u) {
+         a += "<a>" + u[1] + "</a><br>";
+       });
+       document.getElementById("ponline").innerHTML = a;
+       drawio = drawio.concat([["USN", pos.x, pos.y, CCX, document.getElementById("username").value]]);
+
+socket.emit("allowed", [pos.x, pos.y, CCX]);
+}
+}, 1000);
+socket.on("a_allowed", function(r) {
+  allowDrawing = r;
+});
 function toggleCode() {
   if (codeIsPublic == false) {
     codeIsPublic = true;
@@ -135,6 +190,14 @@ socket.on("return", function(data) {
                 image.src = write[1];
                 }
             }
+        } else if(write[0] == "4") {
+          write[2] // username
+          write[1] // id
+          usernames = usernames.concat([[write[1], write[2]]]);
+          setTimeout(function() {
+            usernames.shift();
+          }, 250);
+
         }
 
          else {
@@ -370,7 +433,7 @@ socket.on("uuid_info", function(ret) {
   console.log(c);
   allowDrawing = c[3];
   if (c[0] == false) {
-    document.getElementById("chat").style.display = "none";
+    document.getElementById("ponline").style.display = "none";
   }
   if (c[1] == false) {
     document.getElementById("use").style.display = "none";
@@ -382,9 +445,6 @@ socket.on("uuid_info", function(ret) {
 
   }
 
-  if (c[3] == false) {
-    document.getElementById("controlCenter").style.display = "none";
-  }
 
 
   drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
@@ -400,5 +460,7 @@ socket.emit("get_uuid_info", rrid);
 document.getElementById("size").addEventListener('input', function (evt) {
     setSize();
 });
+
+
 
 get_uuid(); // this makes stuff more automatic and easy
