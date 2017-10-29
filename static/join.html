@@ -1,0 +1,67 @@
+<head>
+  <title>Join SyncDraw</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" type="text/css" href="/external/sync.css?v=3">
+<style>
+.joinButton {
+  border: 1px solid gray;
+  padding: 10px;
+  color: black;
+  font-size: 100%;
+}
+
+#joinCode {
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: 200%;
+  width: 105px;
+}
+</style>
+</head>
+<center>
+<nav>
+    <button><span class='nav'>SyncDraw</span></button>
+</nav>
+<div style='padding-top: 10%;'>
+  <span id="info">Enter the 5 digit number you were given</span><br><br>
+<input id='joinCode'><br><br>
+<button onclick='join()' class='joinButton'>Join</button>
+</div>
+</center>
+<script>
+
+var port = window.location.port;
+if (port == "" || port == 0) {
+    port = "";
+} else {
+    port = ":" + port;
+}
+
+
+var socket = io();
+
+
+socket.on("uuid_info", function(ret) {
+  if (ret[0] == "no_exist") {
+    document.getElementById("info").innerHTML = "<font color='red'>The code you entered was invalid!</font>";
+    document.getElementById("joinCode").value = "";
+    document.getElementById("joinCode").style.border = "1px solid red";
+    setTimeout(function() {
+      document.getElementById("info").innerHTML = "Enter the 5 digit number you were given";
+      document.getElementById("joinCode").style.border = "1px solid black";
+
+
+    }, 2000);
+  } else {
+  document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&share=" + document.getElementById("joinCode").value ;
+
+}
+});
+
+
+function join() {
+  socket.emit("get_uuid_info", document.getElementById("joinCode").value);
+
+}
+</script>

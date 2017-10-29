@@ -62,9 +62,22 @@ window.setInterval(function(){
 socket.emit("writeData", drawio);
     drawio = [];
         socket.emit("reqData", [pos.x,pos.y]);
+
+
 }, delay);
 
 var codeIsPublic = false;
+
+
+window.setInterval(function(){
+       if (codeIsPublic == true) {
+          socket.emit("shareCode", [shuuid, pos.x, pos.y, true]);
+       } else {
+           socket.emit("shareCode", [shuuid, pos.x, pos.y, false]);
+       }
+}, 1000);
+
+
 function toggleCode() {
   if (codeIsPublic == false) {
     codeIsPublic = true;
@@ -78,14 +91,8 @@ function toggleCode() {
 
   }
 }
-setInterval(function() {
-       if (codeIsPublic == true) {
-          socket.emit("shareCode", [shuuid, pos.x, pos.y, true]);
-       } else {
-           socket.emit("shareCode", [shuuid, pos.x, pos.y, false]);
 
-       }
-}, 1000);
+
 socket.on("return", function(data) {
     data.forEach(function(write) {
         write = write.split("|");
@@ -138,7 +145,7 @@ socket.on("online", function(data) {
               var p = "";
 
               }
-            x += p +" <a onclick='restoreFromClick("+ element[3] +");'>"+ element[1] + ", " + element[2] + " (" + element[3] + ")</a><br>";
+            x += p +" <a onclick='restoreFromClick("+ element[3] + "," + element[1] + "," + element[2] +");'>"+ element[1] + ", " + element[2] + " (" + element[3] + ")</a><br>";
           }
       }
       });
@@ -154,7 +161,10 @@ function scolor() {
   }
 }
 
-function restoreFromClick(code) {
+function restoreFromClick(code,x,y) {
+  document.getElementById("x").value = x;
+  document.getElementById("y").value = y;
+  move();
     rrid = code;
     drawio = drawio.concat([['GS', rrid, pos.x, pos.y]]);
 }
@@ -312,10 +322,20 @@ socket.on("rec_uuid", function(id) {
         document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + pos.x + "," + pos.y + "&share=" + shuuid;
 });
 
+socket.on("uuid_info", function(ret) {
+  if (ret[0] == "no_exist") {
+    alert("join code invalid!");
+  } else {
+  document.getElementById("x").value = ret[0];
+  document.getElementById("y").value = ret[1];
+  move();
+  drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
+}
+});
 function sharerestore() {
     reset();
      rrid = document.getElementById("scre").value;
- drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
+socket.emit("get_uuid_info", rrid);
 }
 
 

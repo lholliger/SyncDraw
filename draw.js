@@ -8,6 +8,10 @@ var dir = __dirname + "/static/";
 app.get('/', function(req, res){
   res.sendFile(dir + '/index.html');
 });
+
+app.get('/join', function(req, res){
+  res.sendFile(dir + '/join.html');
+});
 app.use('/external/', express.static(__dirname + "/static/"));
 
 var IOMap = new Object();
@@ -89,24 +93,9 @@ function IOAddRecieve(uuid,cX,cY) {
       IOMap[cX][cY].shift();
     }, 1000);
 }
-
-function IOKeepMap(cX,cY) {
-    if (typeof IOMap[cX] != "undefined") {
-
-    } else {
-        IOMap[cX] = new Object();
-    }
-
-    if (typeof IOMap[cX][cY] != "undefined") {
-            IOMap[cX][cY].push("3" + "|");
-    }  else {
-        IOMap[cX][cY] = [];
-        IOMap[cX][cY].push("3" + "|");
-
-    }
-    setTimeout(function() {
-      IOMap[cX][cY].shift();
-    }, 1000);
+var UUIDKeeper = new Object();
+function ValidUUID(uuid,cX,cY) {
+  UUIDKeeper[uuid] = [cX, cY];
 }
 
 function IOShare(x, y) {
@@ -129,21 +118,28 @@ function IOCGet(cX,cY) {
     return IOMap[cX][cY];
 }
 io.on('connection', function(socket){
+  socket.on("get_uuid_info", function(idin) {
+    if (typeof UUIDKeeper[idin] == "undefined") {
+      socket.emit("uuid_info", ["no_exist"]);
+
+    } else {
+    socket.emit("uuid_info", UUIDKeeper[idin]);
+  }
+  });
     socket.on("shareCode", function(dat) {
         if (!isNaN(dat[0]) && String(dat[0]).length == 5)  {
         if (dat[3] == true) {
-         IOShareUUID(dat[0], dat[1], dat[2]);   
-         IOKeepMap(dat[1], dat[2]);
-
+         IOShareUUID(dat[0], dat[1], dat[2]);
+         ValidUUID(dat[0], dat[1], dat[2]);
         } else {
-         IOKeepMap(dat[1], dat[2]);
+         ValidUUID(dat[0], dat[1], dat[2]);
         }
-        }
+      }
         });
     socket.on("get_uuid", function(dat) {
-       socket.emit("rec_uuid", IOShare(dat.x, dat.y)); 
+       socket.emit("rec_uuid", IOShare(dat.x, dat.y));
     });
-    
+
     socket.on("reqData", function(data) {
 
 var chunkX = data[0];
@@ -165,7 +161,7 @@ if (!isNaN(chunkX) && !isNaN(chunkY)) {
     6: color
     7: size
     */
-            
+
             /*
             0: informer
             1: uuid
@@ -173,7 +169,7 @@ if (!isNaN(chunkX) && !isNaN(chunkY)) {
             3: x
             4: y
             */
-            
+
             if (data[0] == "XOS") {
             IOAddShare(data[1], data[2], data[3], data[4]);
             } else if (data[0] == "GS")  {
@@ -196,15 +192,15 @@ function getUse() {
   var t = [];
 
 
-    
+
     var n = Object.keys(IOUUID);
     n.forEach(function(element) {
      var n2 = Object.keys(IOUUID[element]);
         n2.forEach(function(element2) {
-           t = t.concat([[1, element, element2, IOUUID[element][element2][0]]]); 
+           t = t.concat([[1, element, element2, IOUUID[element][element2][0]]]);
         });
     })
-    
+
   io.emit("online", t);
     return 0;
 
