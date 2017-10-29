@@ -12,27 +12,54 @@ app.get('/', function(req, res){
 app.get('/join', function(req, res){
   res.sendFile(dir + '/join.html');
 });
+
+app.get('/new', function(req, res){
+  res.sendFile(dir + '/new.html');
+});
 app.use('/external/', express.static(__dirname + "/static/"));
 
 var IOMap = new Object();
 var IOUUID = new Object();
-function IOBoard(x, y, x2, y2, cX, cY, color, size) {
+function IOBoard(x, y, x2, y2, cX, cY, color, size, CCX) {
     if (typeof IOMap[cX] != "undefined") {
 
     } else {
         IOMap[cX] = new Object();
     }
-
+    var s = getSettings(cX,cY);
     if (typeof IOMap[cX][cY] != "undefined") {
+      if (s[3]==1 ) {
             IOMap[cX][cY].push(0 + "|" + x + "|" + y + "|" + x2 + "|" + y2 + "|" + color + "|" + size);
-    }  else {
+            setTimeout(function() {
+              IOMap[cX][cY].shift();
+            }, 1000);
+    } else {
+      if (s[4] == CCX) {
+        IOMap[cX][cY].push(0 + "|" + x + "|" + y + "|" + x2 + "|" + y2 + "|" + color + "|" + size);
+        setTimeout(function() {
+          IOMap[cX][cY].shift();
+        }, 1000);
+      }
+    }
+  }  else {
+    if (s[3]==1 ) {
+
         IOMap[cX][cY] = [];
             IOMap[cX][cY].push(0 + "|" + x + "|" + y + "|" + x2 + "|" + y2 + "|" + color + "|" + size);
+            setTimeout(function() {
+              IOMap[cX][cY].shift();
+            }, 1000);
+} else {
+  if (s[4] == CCX) {
+  IOMap[cX][cY] = [];
+      IOMap[cX][cY].push(0 + "|" + x + "|" + y + "|" + x2 + "|" + y2 + "|" + color + "|" + size);
 
+      setTimeout(function() {
+        IOMap[cX][cY].shift();
+      }, 1000);
     }
-    setTimeout(function() {
-      IOMap[cX][cY].shift();
-    }, 1000);
+}
+    }
 }
 
 function IOAddShare(uuid, data,cX,cY) {
@@ -100,7 +127,11 @@ function ValidUUID(uuid,cX,cY) {
 
 function IOShare(x, y) {
     var uuid = Math.floor(Math.random() * 90000) + 10000;
+    if (typeof UUIDKeeper[uuid] == "undefined") {
     return uuid;
+  } else {
+    IOShare(x,y);
+  }
 }
 
 function IOCGet(cX,cY) {
@@ -117,13 +148,68 @@ function IOCGet(cX,cY) {
     }
     return IOMap[cX][cY];
 }
+
+var RS = new Object();
+function roomSettings(cX, cY, a,b,c,d, X) {
+  if (typeof RS[cX] != "undefined") {
+
+} else {
+  RS[cX] = new Object();
+}
+
+RS[cX][cY] = [a,b,c,d, X];
+}
+
+function getSettings(cX,cY,CCX) {
+  if (typeof RS[cX] != "undefined") {
+
+} else {
+  RS[cX] = new Object();
+}
+if (typeof RS[cX][cY] != "undefined") {
+} else {
+RS[cX][cY] = [1,1,1,1, 0];
+}
+
+if (RS[cX][cY][4] == 0) {
+return RS[cX][cY];
+} else {
+  if (RS[cX][cY][4] == CCX) {
+    return [1,1,1,1,0];
+
+  } else {
+
+    return RS[cX][cY];
+
+
+  }
+}
+
+}
+function getESettings(x,y) {
+  var c = RS[x][y]
+  return [c[0], c[1], c[2], c[3]];
+
+}
 io.on('connection', function(socket){
+
+socket.on("getSettings", function(x,y, ccx) {
+  socket.emit("roomSettings", getSettings(x,y, ccx));
+})
+  socket.on("getMeARoom", function(opt) {
+    var x = Math.floor(Math.random() * 90000) + 100;
+    var y = Math.floor(Math.random() * 90000) + 100;
+    var CXX = Math.floor(Math.random() * 90000) + 10000;
+    roomSettings(x,y, opt[0],  opt[1], opt[2], opt[3], CXX);
+socket.emit("room_created", [x,y, CXX]);
+  });
   socket.on("get_uuid_info", function(idin) {
     if (typeof UUIDKeeper[idin] == "undefined") {
       socket.emit("uuid_info", ["no_exist"]);
 
     } else {
-    socket.emit("uuid_info", UUIDKeeper[idin]);
+      var s = UUIDKeeper[idin];
+    socket.emit("uuid_info", [s[0], s[1], getESettings(s[0], s[1])]);
   }
   });
     socket.on("shareCode", function(dat) {
@@ -176,7 +262,7 @@ if (!isNaN(chunkX) && !isNaN(chunkY)) {
             IOAddRecieve(data[1], data[2], data[3]);
             } else {
     if (!isNaN(data[2]) && !isNaN(data[3])) {
-        IOBoard(data[2],data[3],data[4],data[5],data[0],data[1], data[6], data[7]);
+        IOBoard(data[2],data[3],data[4],data[5],data[0],data[1], data[6], data[7], data[8]);
       }
 
             }

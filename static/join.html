@@ -31,15 +31,11 @@
 </center>
 <script>
 
-var port = window.location.port;
-if (port == "" || port == 0) {
-    port = "";
-} else {
-    port = ":" + port;
-}
 
 
 var socket = io();
+
+
 
 
 socket.on("uuid_info", function(ret) {
@@ -54,7 +50,7 @@ socket.on("uuid_info", function(ret) {
 
     }, 2000);
   } else {
-  document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&share=" + document.getElementById("joinCode").value ;
+  document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&share=" + document.getElementById("joinCode").value + "&settings=" + ret[2];
 
 }
 });
@@ -64,4 +60,18 @@ function join() {
   socket.emit("get_uuid_info", document.getElementById("joinCode").value);
 
 }
+
+
+if (window.location.hash.substr(1) != null) {
+  document.getElementById("joinCode").value = window.location.hash.substr(1);
+  join()
+}
+var port = window.location.port;
+if (port == "" || port == 0) {
+    port = "";
+} else {
+    port = ":" + port;
+}
+
+
 </script>

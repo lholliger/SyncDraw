@@ -1,0 +1,80 @@
+<head>
+  <title>New SyncDraw</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" type="text/css" href="/external/sync.css?v=3">
+<style>
+.joinButton {
+  border: 1px solid gray;
+  padding: 10px;
+  color: black;
+  font-size: 100%;
+}
+
+#joinCode {
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: 200%;
+  width: 105px;
+}
+
+
+</style>
+</head>
+<center>
+<nav>
+    <button><span class='nav'>SyncDraw</span></button>
+</nav>
+<div style='padding-top: 10%;'>
+  <h2>Create Controlled Room</h2><br><br><br>
+<input type="checkbox" id='s_chat'> Show Chat<br><br>
+<input type="checkbox" id='s_rooms'> Show Public Rooms<br><br>
+<input type="checkbox" id='s_settings'> Show Settings<br><br>
+<input type="checkbox" id='s_draw'> Allow Drawing<br><br>
+
+<button onclick='join()' class='joinButton'>Create</button>
+</div>
+</center>
+<script>
+
+function join() {
+socket.emit("getMeARoom", [document.getElementById("s_chat").checked,
+document.getElementById("s_rooms").checked,
+document.getElementById("s_settings").checked,
+document.getElementById("s_draw").checked]);
+}
+var socket = io();
+
+socket.on("room_created", function(ret) {
+  document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&CCX=" + ret[2];
+});
+var port = window.location.port;
+if (port == "" || port == 0) {
+    port = "";
+} else {
+    port = ":" + port;
+}
+
+
+
+
+
+socket.on("uuid_info", function(ret) {
+  if (ret[0] == "no_exist") {
+    document.getElementById("info").innerHTML = "<font color='red'>The code you entered was invalid!</font>";
+    document.getElementById("joinCode").value = "";
+    document.getElementById("joinCode").style.border = "1px solid red";
+    setTimeout(function() {
+      document.getElementById("info").innerHTML = "Enter the 5 digit number you were given";
+      document.getElementById("joinCode").style.border = "1px solid black";
+
+
+    }, 2000);
+  } else {
+  document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&share=" + document.getElementById("joinCode").value ;
+
+}
+});
+
+
+</script>

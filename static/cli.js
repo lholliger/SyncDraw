@@ -9,6 +9,35 @@ function get(name){
 if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
   return decodeURIComponent(name[1]);
 }
+
+if (get("settings") == null) {
+var allowDrawing = true;
+} else {
+var  c = get("settings");
+c = JSON.parse("[" + c + "]");
+var allowDrawing = c[3];
+if (c[0] == false) {
+  document.getElementById("chat").style.display = "none";
+}
+if (c[1] == false) {
+  document.getElementById("use").style.display = "none";
+}
+
+if (c[2] == false) {
+  document.getElementById("sp").innerHTML = '<span class="nav" style="cursor:pointer" >SyncDraw</span>';
+}
+
+if (c[3] == false) {
+  document.getElementById("controlCenter").style.display = "none";
+}
+}
+
+
+if (get("CCX") == null) {
+  var CCX = 0;
+} else {
+var CCX = get("CCX");
+}
 if (get("delay") == null) {
  delay = 250;
 } else {
@@ -22,7 +51,6 @@ pos.y = 0;
  pos.x = ch[0];
  pos.y = ch[1];
 
-cverify();
 }
 
 if (get("share") == null) {
@@ -30,11 +58,6 @@ if (get("share") == null) {
 } else {
  var rrid = get("share");
  drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
-}
-function cverify() {
-  if (pos.x >= 100 || pos.y >= 100){
-    document.getElementById("cinfo").innerHTML = "<font color='red'>This chunk will not show up on the Active Chunks list</font>";
-  }
 }
 var port = window.location.port;
 if (port == "" || port == 0) {
@@ -56,7 +79,6 @@ function move() {
   socket.emit("reqData", [pos.x,pos.y]);
   document.getElementById("cx").innerHTML =  pos.x;
   document.getElementById("cy").innerHTML =  pos.y;
-cverify();
 }
 window.setInterval(function(){
 socket.emit("writeData", drawio);
@@ -224,46 +246,53 @@ var ly = 0;
 
 
 canvas.addEventListener('mousemove', function(evt) {
+  if (allowDrawing == true) {
+
 var mousePos = getMousePos(canvas, evt);
 if (mouseDown) {
 if (lx == 0 && ly == 0) {
     draw(mousePos.x, mousePos.y, mousePos.x, mousePos.y, color, size);
-  drawio = drawio.concat([[pos.x,pos.y,mousePos.x, mousePos.y, mousePos.x, mousePos.y, color, size]]);
+  drawio = drawio.concat([[pos.x,pos.y,mousePos.x, mousePos.y, mousePos.x, mousePos.y, color, size, CCX]]);
 
 } else {
-  drawio = drawio.concat([[pos.x,pos.y,lx, ly, mousePos.x, mousePos.y, color, size]]);
+  drawio = drawio.concat([[pos.x,pos.y,lx, ly, mousePos.x, mousePos.y, color, size, CCX]]);
     draw(lx, ly, mousePos.x, mousePos.y, color, size);
 }
 
 lx = mousePos.x;
 ly = mousePos.y;
 }
-
+}
 }, false);
 
 var startx = 0;
 var starty = 0;
 canvas.addEventListener('touchstart', function(e) {
+  if (allowDrawing == true) {
+
 var rect = canvas.getBoundingClientRect();
 
 var touchobj = e.changedTouches[0];
 startx = parseInt(touchobj.clientX - rect.left);
 starty = parseInt(touchobj.clientY - rect.top);
 e.preventDefault()
+}
 }, false)
 
 canvas.addEventListener('touchmove', function(e) {
+  if (allowDrawing == true) {
+
 var rect = canvas.getBoundingClientRect();
 
 var touchobj = e.changedTouches[0];
 if (touchobj.clientX - rect.left > 1000 || touchobj.clientX - rect.left < 0 || touchobj.clientY - rect.top < 0 || touchobj.clientY - rect.top > 1000) {} else {
 if (startx == 0 && starty == 0) {
 draw(touchobj.clientX - rect.left, touchobj.clientY - rect.top, touchobj.clientX - rect.left, touchobj.clientY - rect.top, color, size);
-drawio = drawio.concat([[pos.x,pos.y,Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), Math.round(touchobj.clientX), Math.round(touchobj.clientY), color, size]]);
+drawio = drawio.concat([[pos.x,pos.y,Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), Math.round(touchobj.clientX), Math.round(touchobj.clientY), color, size, CCX]]);
 
 } else {
 draw(startx, starty, touchobj.clientX - rect.left, touchobj.clientY - rect.top, color, size);
-drawio = drawio.concat([[pos.x,pos.y,Math.round(startx), Math.round(starty), Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), color, size]]);
+drawio = drawio.concat([[pos.x,pos.y,Math.round(startx), Math.round(starty), Math.round(touchobj.clientX - rect.left), Math.round(touchobj.clientY - rect.top), color, size, CCX]]);
 
 }
 startx = touchobj.clientX - rect.left;
@@ -272,12 +301,16 @@ starty = touchobj.clientY - rect.top;
 }
 
 e.preventDefault()
+}
 }, false)
 
 
 canvas.addEventListener('touchend', function(e) {
+  if (allowDrawing == true) {
+
 startx = 0;
 starty = 0;
+}
 }, false);
         socket.emit("reqData", [pos.x,pos.y]);
 
@@ -329,6 +362,27 @@ socket.on("uuid_info", function(ret) {
   document.getElementById("x").value = ret[0];
   document.getElementById("y").value = ret[1];
   move();
+  var c = ret[2];
+  console.log(c);
+  allowDrawing = c[3];
+  if (c[0] == false) {
+    document.getElementById("chat").style.display = "none";
+  }
+  if (c[1] == false) {
+    document.getElementById("use").style.display = "none";
+  }
+
+  if (c[2] == false) {
+    document.getElementById("sp").innerHTML = '<span class="nav" style="cursor:pointer" >SyncDraw</span>';
+    document.getElementById("cinfo").innerHTML = "<font color='red'>This room has the menu disabled. Reload the page to leave.</font>";
+
+  }
+
+  if (c[3] == false) {
+    document.getElementById("controlCenter").style.display = "none";
+  }
+
+
   drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
 }
 });
