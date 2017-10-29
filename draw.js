@@ -236,9 +236,9 @@ socket.on("allowed", function(dat) {
 });
 socket.on("allowAccess", function(dat) {
   if (dat[2] == 1) {
-    RS[dat[3]][dat[4]][4].push(parseInt(dat[1].substring(2)));
+    RS[dat[3]][dat[4]][4].push(parseInt(dat[1]));
   } else {
-    var index = RS[dat[3]][dat[4]][4].indexOf(parseInt(dat[1].substring(2)));    // <-- Not supported in <IE9
+    var index = RS[dat[3]][dat[4]][4].indexOf(parseInt(dat[1]));    // <-- Not supported in <IE9
     if (index !== -1) {
       RS[dat[3]][dat[4]][4].splice(index, 1);
 }

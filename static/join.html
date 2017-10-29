@@ -17,6 +17,13 @@
   font-size: 200%;
   width: 105px;
 }
+#userName {
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: 200%;
+  width: 200px;
+}
 </style>
 </head>
 <center>
@@ -25,7 +32,10 @@
 </nav>
 <div style='padding-top: 10%;'>
   <span id="info">Enter the 5 digit number you were given</span><br><br>
-<input id='joinCode'><br><br>
+<input id='joinCode' placeholder="Code"><br><br>
+<input id='userName' placeholder="Username"><br><br>
+
+<br><br>
 <button onclick='join()' class='joinButton'>Join</button>
 </div>
 </center>
@@ -34,8 +44,6 @@
 
 
 var socket = io();
-
-
 
 
 socket.on("uuid_info", function(ret) {
@@ -50,8 +58,13 @@ socket.on("uuid_info", function(ret) {
 
     }, 2000);
   } else {
-  document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&share=" + document.getElementById("joinCode").value + "&settings=" + ret[2];
+    if (document.getElementById("userName").value != "") {
+      document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&share=" + document.getElementById("joinCode").value + "&settings=" + ret[2] + "&username=" + document.getElementById("userName").value;
 
+
+    } else {
+  document.location = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + ret[0] + "," + ret[1] + "&share=" + document.getElementById("joinCode").value + "&settings=" + ret[2];
+}
 }
 });
 

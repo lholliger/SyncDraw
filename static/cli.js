@@ -107,45 +107,51 @@ var rw = get("rw");
 if (admin  == "1") {
   var alACC = [];
 }
-window.setInterval(function(){
-var a = "";
-if (admin == "1" && rw != "1") {
-  usernames.forEach(function(u) {
-    if (alACC.includes("a_" + u[0])) {
-      a += '<input type="checkbox" id="a_' + u[0] + '" checked>' + "<a>" + u[1] + "</a><br>";
 
-    } else {
-    a += '<input type="checkbox" id="a_' + u[0] + '">' + "<a>" + u[1] + "</a><br>";
+function togAll(id) {
+  socket.emit("allowAccess", [CCX, id, 1, pos.x, pos.y]);
+  alACC.push(id);
+  console.log(id, alACC, 1);
+
 }
 
+function togOff(id) {
+
+  socket.emit("allowAccess", [CCX, id, 0, pos.x, pos.y]);
+  var index = alACC.indexOf(id);    // <-- Not supported in <IE9
+  if (index !== -1) {
+    alACC.splice(index, 1);
+}
+console.log(id, alACC, 0);
+
+}
+window.setInterval(function(){
+var a = "";
+var cach = [];
+if (admin == "1" && rw != "1") {
+  usernames.forEach(function(u) {
+    if (a.includes("a_" + u[0])) {} else {
+      cach.push(u[0]);
+    if (alACC.includes(parseInt(u[0]))) {
+
+      a += '<input type="checkbox" id="a_' + u[0] + '" onclick="togOff(' +  u[0] + ')" checked>' + "<a>" + u[1] + "</a><br>";
+
+    } else {
+      a += '<input type="checkbox" id="a_' + u[0] + '" onclick="togAll(' +  u[0] + ')">' + "<a>" + u[1] + "</a><br>";
+}
+}
 
 
   });
   document.getElementById("ponline").innerHTML = a;
 
-  if (admin == "1" && rw != "1") {
-    usernames.forEach(function(u) {
-
-      document.getElementById("a_" + u[0]).addEventListener( 'change', function() {
-      if(this.checked) {
-          socket.emit("allowAccess", [CCX, this.id, 1, pos.x, pos.y]);
-          alACC.push(this.id);
-      } else {
-        socket.emit("allowAccess", [CCX, this.id, 0, pos.x, pos.y]);
-        var index = alACC.indexOf(this.id);    // <-- Not supported in <IE9
-        if (index !== -1) {
-          alACC.splice(index, 1);
-  }
-      }
-  });
-
-});
-  }
   drawio = drawio.concat([["USN", pos.x, pos.y, CCX, document.getElementById("username").value]]);
 
 } else {
        usernames.forEach(function(u) {
+         if (a.includes(u[1])) {} else {
          a += "<a>" + u[1] + "</a><br>";
+       }
        });
        document.getElementById("ponline").innerHTML = a;
        drawio = drawio.concat([["USN", pos.x, pos.y, CCX, document.getElementById("username").value]]);
@@ -196,7 +202,7 @@ socket.on("return", function(data) {
           usernames = usernames.concat([[write[1], write[2]]]);
           setTimeout(function() {
             usernames.shift();
-          }, 250);
+          }, 1000);
 
         }
 
