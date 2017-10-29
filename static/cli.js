@@ -70,11 +70,11 @@ document.getElementById("cy").innerHTML = pos.y;
 pos.x = document.getElementById("x").value = pos.x;
 pos.y = document.getElementById("y").value = pos.y;
 
-    document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname + port + "?chunk=" + pos.x + "," + pos.y;
+document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "/join#" +shuuid;
 function move() {
   pos.x = document.getElementById("x").value;
   pos.y = document.getElementById("y").value;
-    document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + pos.x + "," + pos.y;
+    document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "/join#" +shuuid;
   reset();
   socket.emit("reqData", [pos.x,pos.y]);
   document.getElementById("cx").innerHTML =  pos.x;
@@ -352,7 +352,7 @@ var shuuid = 0;
 socket.on("rec_uuid", function(id) {
     shuuid = id;
     document.getElementById("ShareCode").innerHTML =  shuuid;
-        document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + pos.x + "," + pos.y + "&share=" + shuuid;
+    document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "/join#" +shuuid;
 });
 
 socket.on("uuid_info", function(ret) {
