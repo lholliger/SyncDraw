@@ -5,61 +5,148 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
-    
 
-<link rel="stylesheet" type="text/css" href="/external/sync.css?v=2">
+
+<link rel="stylesheet" type="text/css" href="/external/sync.css?v=3">
 
 </head>
 <style>
 
 </style>
-<body><br>
-  <center><h2>SyncDraw<sup>Beta</sup></h2>
+<body>
+<nav>
+    <button><span class='nav' style="cursor:pointer" onclick="openNav()">&#9776; SyncDraw</span></button>
+</nav>
+
+
+
+
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a><b>Share Code</b></a>
+          <a><span onclick='toggleCode()' id='ShareCode'>error</span> <span id="public">PRIVATE</span></a><a></a>
+          <a><b>Restore</b></a>
+          <a>
+            <input id='scre' type='number' class='move'><button onclick='sharerestore()'>Restore</button>
+          </a><a></a>
+          <a></a>
+          <a>Sharable Link</a>
+          <a><input id='link' class='sharelink' disabled></a>
+          <a><b>Location</b></a>
+          <a>
+          <span id='loc_a' onclick='toggleMove(1)'>
+          <span id='cx'></span>,
+          <span id='cy'></span>
+        </span>
+        <span id='loc_b'>
+          <input id='x' type='number' class='move'></input>,
+          <input id='y' type='number' class='move'></input>
+          <button onclick='move(); toggleMove(0);'>Move</button>
+        </span>
+        </a>
+  </div>
+
+
+  <script>
+  document.getElementById("public").style.color = "red";
+  document.getElementById("loc_b").style.display = "none";
+
+  function toggleMove(t) {
+    if (t == 1) {
+    document.getElementById("loc_a").style.display = "none";
+    document.getElementById("loc_b").style.display = "block";
+  } else {
+    document.getElementById("loc_a").style.display = "block";
+    document.getElementById("loc_b").style.display = "none";
+  }
+
+  }
+  function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+  }
+
+  function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+  }
+  function preset(type) {
+    if (type == "pen") {
+      size = 3;
+      if (color == "#FFFFFF") {
+        color = "#000000";
+      $("#colorpicker").spectrum({
+          color: "#000000",
+          change: function(colors) {
+          color = colors.toHexString();
+      }
+      });
+    }
+    }
+if (type == "eraser") {
+    color = "#FFFFFF";
+    size = 20;
+    $("#colorpicker").spectrum({
+        color: "#FFFFFF",
+        change: function(colors) {
+        color = colors.toHexString();
+    }
+    });
+}
+if (type == "sp") {
+  size = 1;
+}
+if (type == "mp") {
+  size = 5;
+}
+
+if (type == "lp") {
+  size = 15;
+}
+  }
+  </script>
+
+
+
+
+  <center>
+
+  <br>
     <p id='cinfo'></p>
 <br>
-    <table>
-      <tr>
-        <td>
-          <div style='width: 200px;'>
-          </div>
-          <center>
-          <h2>Shared Chunks</h2><hr>
-<div id='use'></div>
-        </td>
-        <td>
-    <canvas id='writer'>lolno</canvas>
-  </td>
-  <td>
-    <div style='width: 200px;'>
-    </div>
-    <center>
-    <h2>Settings</h2>
-    <button onclick='reset()'>Clear</button><br><br>
-       <div id='ShareCode'>error</div>
-      <input id="sharebox" type="checkbox"> Make code public<br>
-      <input id='scre' type='number'><button onclick='sharerestore()'>Restore</button>
-        <hr>
-    <h3>Current Chunk</h3>
-    <p id='cx'></p>
-    <p id='cy'></p>
-        <p>Sharable link:</p>
-        <input id='link' class='sharelink' disabled></input>
-    <hr>
-    <h3>Change Chunk</h3>
-    X: <input id='x' type='number'></input>
-    Y: <input id='y' type='number'></input>
-    <button onclick='move()'>Move</button>
+<table>
+  <tr>
+    <td>
+      <center>
+<h2>Shared Rooms</h2>
 <hr>
-  <h3>Customize Pen<sup> Beta</sup></h3>
-    <input id='colorpicker'><br><br>
-    Size: <input id='size' type='number'> px
-    <hr>
-  </td>
-    </tr>
+<div id='use'></div>
+</center>
+
+</td>
+<td width="1000px">
+          <center>
+          <div id='controlCenter'>
+            <input id='colorpicker'><span class='d'></span>
+<button onclick="preset('sp')">Small</button>
+<button onclick="preset('mp')">Medium</button>
+<button onclick="preset('lp')">Large</button>
+
+            <input id='size' type='number'> px<span class='d'></span>
+
+            <button onclick="preset('eraser')">Eraser</button>
+
+          </div>
+    <canvas id='writer'>SyncDraw is not compatable with this browser. We support Chrome by Google</canvas>
+</td>
+<td><center>
+  <h2>Room Chat</h2>
+  <hr>
+  Coming Soon
+</td>
+</center>
+</tr>
 </table>
 <br>
 <p>Contribute on <a href='https://github.com/DatOneLefty/SyncDraw'>GitHub</a></p>
     </center>
 </body>
-<script src='/external/cli.js?v=11'></script>
-  
+<script src='/external/cli.js?v=12'></script>

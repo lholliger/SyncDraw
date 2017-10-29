@@ -28,7 +28,7 @@ cverify();
 if (get("share") == null) {
     var rrid = 0;
 } else {
- var rrid = get("share");  
+ var rrid = get("share");
  drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
 }
 function cverify() {
@@ -42,8 +42,8 @@ if (port == "" || port == 0) {
 } else {
     port = ":" + port;
 }
-document.getElementById("cx").innerHTML = "X: " + pos.x;
-document.getElementById("cy").innerHTML = "Y: " + pos.y;
+document.getElementById("cx").innerHTML = pos.x;
+document.getElementById("cy").innerHTML = pos.y;
 pos.x = document.getElementById("x").value = pos.x;
 pos.y = document.getElementById("y").value = pos.y;
 
@@ -54,8 +54,8 @@ function move() {
     document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + pos.x + "," + pos.y;
   reset();
   socket.emit("reqData", [pos.x,pos.y]);
-  document.getElementById("cx").innerHTML = "X: " + pos.x;
-  document.getElementById("cy").innerHTML = "Y: " + pos.y;
+  document.getElementById("cx").innerHTML =  pos.x;
+  document.getElementById("cy").innerHTML =  pos.y;
 cverify();
 }
 window.setInterval(function(){
@@ -63,9 +63,24 @@ socket.emit("writeData", drawio);
     drawio = [];
         socket.emit("reqData", [pos.x,pos.y]);
 }, delay);
+
+var codeIsPublic = false;
+function toggleCode() {
+  if (codeIsPublic == false) {
+    codeIsPublic = true;
+    document.getElementById("public").innerHTML = "PUBLIC";
+    document.getElementById("public").style.color = "green";
+  } else {
+    codeIsPublic = false;
+    document.getElementById("public").innerHTML = "PRIVATE";
+    document.getElementById("public").style.color = "red";
+
+
+  }
+}
 setInterval(function() {
-       if (document.getElementById("sharebox").checked == true) {
-    socket.emit("shareCode", [shuuid, pos.x, pos.y, true]);
+       if (codeIsPublic == true) {
+          socket.emit("shareCode", [shuuid, pos.x, pos.y, true]);
        } else {
            socket.emit("shareCode", [shuuid, pos.x, pos.y, false]);
 
@@ -76,8 +91,8 @@ socket.on("return", function(data) {
         write = write.split("|");
         if (write[0] == "0") {
         draw(write[1], write[2], write[3], write[4], write[5], write[6]);
-        } 
-        else if(write[0] == "1") { 
+        }
+        else if(write[0] == "1") {
             if (shuuid == write[1]) {
                 drawio = drawio.concat([["XOS", shuuid, document.getElementById("writer").toDataURL("image/jpeg"), pos.x, pos.y]]);            }
         } else if (write[0] == "2") {
@@ -91,7 +106,7 @@ socket.on("return", function(data) {
                 }
             }
         }
-        
+
          else {
         }
     });
@@ -118,13 +133,13 @@ socket.on("online", function(data) {
       } else {
           if (element[3] == null) {} else {
               if (element[3] == shuuid) {
-              var p = "(you) ";   
+              var p = "(you) ";
               } else {
               var p = "";
-   
+
               }
             x += p +" <a onclick='restoreFromClick("+ element[3] +");'>"+ element[1] + ", " + element[2] + " (" + element[3] + ")</a><br>";
-          }          
+          }
       }
       });
    document.getElementById("use").innerHTML = x;
@@ -147,6 +162,7 @@ function restoreFromClick(code) {
 var mouseDown = false;
 document.body.onmousedown = function() {
 mouseDown = true;
+
 }
 document.body.onmouseup = function() {
 mouseDown = false;
@@ -284,7 +300,7 @@ var size = 1;
 
 function get_uuid() {
     if (shuuid == 0) {
-socket.emit("get_uuid", [pos.x,pos.y]);  
+socket.emit("get_uuid", [pos.x,pos.y]);
     } else {
     alert("You have already gotten a share id!");
     }
@@ -292,13 +308,13 @@ socket.emit("get_uuid", [pos.x,pos.y]);
 var shuuid = 0;
 socket.on("rec_uuid", function(id) {
     shuuid = id;
-    document.getElementById("ShareCode").innerHTML = "Your share code: <b>" + shuuid;
+    document.getElementById("ShareCode").innerHTML =  shuuid;
         document.getElementById("link").value = window.location.protocol + "//" + window.location.hostname+ port + "?chunk=" + pos.x + "," + pos.y + "&share=" + shuuid;
 });
 
 function sharerestore() {
     reset();
-     rrid = document.getElementById("scre").value; 
+     rrid = document.getElementById("scre").value;
  drawio = drawio.concat([["GS", rrid, pos.x, pos.y]]);
 }
 

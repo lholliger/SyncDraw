@@ -22,11 +22,12 @@ a {
   }
 
   button {
-     background: lightgray;
-        border: 1px solid lightgray;
+     background: none;
+        border: none;
         border-radius: 5px;
         padding: 5px;
         margin: 3px;
+        color: #818181;
     }
 
 .sharelink {
@@ -37,3 +38,149 @@ width: auto;
 #scre {
     width: 60px;
         }
+
+
+nav {
+  width: 100%;
+  color: white;
+  background-color: black;
+  height: 40px;
+  padding: 5px;
+}
+
+nav button {
+  background: black;
+  color: white;
+  border: none;
+  padding: 10px;
+  height: 35px;
+  margin: 0;
+  font-size: 100%;
+}
+
+
+nav button.title {
+  font-size: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#controlCenter {
+  width: 995px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding: 5px;
+  margin: 0;
+  margin-left: -5px;
+  background-color: #EEEEEE;
+}
+#controlCenter button {
+  color: black;
+  font-size: 80%;
+}
+
+
+h2 {
+  padding: 0;
+  margin: 5px;
+  display: inline;
+}
+
+div {
+  display: inline-block;
+}
+
+div.control {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+td {
+  margin: 10px;
+}
+
+
+
+
+
+button:hover {
+   color: "black";
+}
+.d {
+  height: 50px;
+  color: black;
+  border: 0.5px solid black;
+  margin: 10px;
+}
+
+#size {
+  background: none;
+  border-radius: 3px;
+  padding: 3px;
+  border: 1px solid gray;
+}
+
+/* w3schools */
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav button:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+/* end w3schools */
+input {
+  padding: 0;
+  margin: 0;
+}
+#link {
+  background: none;
+  width: 80%;
+  border: 1px solid #818181;
+  border-radius: 5px;
+  padding: 3px;
+}
+input.move {
+  border: 1px solid #818181;
+  background: none;
+  color: #818181;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+#shareCode:hover {
+    color: #f1f1f1;
+}
