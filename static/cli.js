@@ -430,7 +430,7 @@ socket.on("rec_uuid", function(id) {
     document.getElementById("ShareCode").innerHTML =  shuuid;
 link();
 if (get("a") == 1) {
-    document.getElementById("cinfo").innerHTML = "<h2>Go to <font color='blue'>join.draw.cf</font> and enter the code <font color='blue'>" + shuuid + "</font>!</h2>";
+    document.getElementById("cinfo").innerHTML = "<h2>Go to <font color='blue'>" + window.location.hostname+ port + "/join" +"</font> and enter the code <font color='blue'>" + shuuid + "</font>!</h2>";
 }
 });
 
